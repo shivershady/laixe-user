@@ -10,7 +10,7 @@ function AboutSection() {
       <ul className="mt-4 list-disc list-inside">
         <li>Cơ sở vật chất đạt tiêu chuẩn ISO:9001:2015</li>
         <li>Giáo viên có nhiều năm kinh nghiệm</li>
-        <li>Chương trình học linh hoạt, phù hợp với nhu cầu học viên</li>
+        <li>Chương trình học linh hoạt, phù hợp với nhu cầu học viên.</li>
       </ul>
     </section>
   );
