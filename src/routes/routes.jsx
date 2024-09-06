@@ -14,17 +14,20 @@ export const routes_here = [
     {
         path: "/",
         element: <Home />,
-        isPrivate: true,
+        isPrivate: false,
+        useLayout: true,
     },
     {
         path: "/login",
         element: <Login />,
         isPrivate: false,
+        useLayout: false,
     },
     {
         path: "/register", // Thêm route mới cho trang đăng ký
         element: <Register />,
         isPrivate: false,
+        useLayout: false,
     },
     //routes in objects
 ];

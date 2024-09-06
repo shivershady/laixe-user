@@ -1,9 +1,10 @@
-import React, { Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import React, { Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
-import PrivateRoute from '@components/PrivateRoute'
-import ScrollTop from '@components/ScrollTop'
-import { routes_here } from './routes'
+import Layout from '@layouts/Layout';
+import PrivateRoute from '@components/PrivateRoute';
+import ScrollTop from '@components/ScrollTop';
+import { routes_here } from './routes';
 
 export default function AppRoutes() {
     return (
@@ -18,7 +19,7 @@ export default function AppRoutes() {
                                     path={route.path}
                                     element={
                                         <Suspense fallback={<h1>Loading....</h1>}>
-                                            {route.element}
+                                            {route.useLayout ? <Layout>{route.element}</Layout> : route.element}
                                         </Suspense>
                                     }
                                 />
@@ -27,7 +28,7 @@ export default function AppRoutes() {
                             <Route
                                 key={key}
                                 path={route.path}
-                                element={route.element}
+                                element={route.useLayout ? <Layout>{route.element}</Layout> : route.element}
                             />
                         )
                     ))}

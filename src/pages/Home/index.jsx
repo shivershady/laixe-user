@@ -1,16 +1,11 @@
-import AboutSection from './components/AboutSection';
-import ContactSection from './components/ContactSection';
-import CourseList from './components/CourseList';
+import DrivingSchool from './components/DrivingSchool';
 import HeroSection from './components/HeroSection';
-import React from 'react';
 
 function Home() {
     return (
         <>
             <HeroSection />
-            <CourseList />
-            <AboutSection />
-            <ContactSection />
+            <DrivingSchool />
         </>
     );
 }

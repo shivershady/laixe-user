@@ -1,21 +1,13 @@
-import React from 'react';
+import Header from './Header';
 
 export default function Layout({ children }) {
     return (
-        <div className='m-4'>
-            <header className='flex items-center justify-between w-full p-4 gap-x-10 h-14 rounded-xl'>
-                <h1 className='text-xl font-semibold '>Trung Tâm Đào Tạo Lái Xe</h1>
-                <nav>
-                    <ul className='flex space-x-4'>
-                        <li><a href="/">Trang chủ</a></li>
-                        <li><a href="/login">Đăng nhập</a></li>
-                        <li><a href="/register">Đăng ký</a></li>
-                    </ul>
-                </nav>
-            </header>
-            <main>{children}</main>
-            <footer className='mt-4 text-center'>
-                <p>&copy; 2023 Trung Tâm Đào Tạo Lái Xe. Tất cả quyền được bảo lưu.</p>
+        <div className='min-h-screen'>
+            <Header />
+            <main >{children}</main>
+            <footer className='p-4 mt-4 text-center text-white bg-[#465663] flex justify-center space-x-10'>
+                <p>Trung tâm học lái xe tại Hải Dương - Học lái xe máy - Học lái xe ô tô số tự động - học lái xe ô tô số sàn</p>
+                <p>Học lái xe số tự động - Học bằng B2 - Học bằng C - Học lái xe uy tín</p>
             </footer>
         </div>
     );
