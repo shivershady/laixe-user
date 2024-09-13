@@ -24,27 +24,38 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
+    // Update regex to require at least one uppercase and one lowercase letter
+    const updatedPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!updatedPasswordRegex.test(formData.password)) {
+      setError('Mật khẩu phải có chữ hoa, chữ thường, số và ký tự đặc biệt. Và phải có ít nhất 8 ký tự.');
+      return;
+    }
+
+    // Validate phone number length
+    const phoneRegex = /^\d{10,11}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      setError('Số điện thoại phải có 10 hoặc 11 chữ số.');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Mật khẩu không khớp');
       return;
     }
 
     try {
-      const response = await authService.register(formData);
-      if (response.success) {
-        navigate('/login');
-      } else {
-        setError('Đăng ký thất bại. Vui lòng thử lại.');
-      }
+      await authService.register(formData);
+      navigate('/login');
     } catch (error) {
-      setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+      const message = error.response.data.message;
+      setError(message || 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
       console.error('Lỗi đăng ký:', error);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="p-8 space-y-6 w-full max-w-md bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center">Đăng ký</h1>
 
         {error && <p className="text-sm text-center text-red-600">{error}</p>}
@@ -59,7 +70,7 @@ export default function Register() {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -71,19 +82,19 @@ export default function Register() {
               value={formData.age}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Số điện thoại</label>
             <input
-              type="tel"
+              type="number"
               id="phone"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -95,7 +106,7 @@ export default function Register() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -107,7 +118,7 @@ export default function Register() {
               value={formData.address}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -119,7 +130,7 @@ export default function Register() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -131,12 +142,12 @@ export default function Register() {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="px-4 py-2 w-full text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Đăng ký
           </button>
