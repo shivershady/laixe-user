@@ -1,28 +1,29 @@
-import { useEffect, useState } from 'react';
 import { FaCaretDown, FaFolder, FaHome, FaPencilAlt, FaUser, FaUserPlus } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 import { examService } from '../services/examService';
+import { useUser } from '../hooks/UserContext';
 import { userService } from '../services/userService';
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate(); // Khởi tạo navigate
-  const [user, setUser] = useState(null);
+  const token = localStorage.getItem('token');
+  const { user, updateUser } = useUser();
   const [exams, setExams] = useState([]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const fetchUserInfo = async () => {
-      try {
-        const response = await userService.getUserInfo();
-        setUser(response);
-        localStorage.setItem('user', JSON.stringify(response));
-      } catch (error) {
-        console.error('Error fetching user info:', error);
-      }
-    };
+  const fetchUserInfo = async () => {
+    try {
+      const response = await userService.getUserInfo();
+      localStorage.setItem('user', JSON.stringify(response));
+      updateUser(response)
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
 
+  useEffect(() => {
     const fetchExams = async () => {
       try {
         const response = await examService.getExams();
@@ -31,11 +32,11 @@ function Header() {
         console.error('Error fetching exams:', error);
       }
     };
-
-    if (token) {
-      fetchUserInfo();
-    }
     fetchExams();
+
+    if (token && !user) {
+      fetchUserInfo()
+    }
   }, []);
 
   const menuItems = [
@@ -72,14 +73,14 @@ function Header() {
       if (registeredExam) {
         navigate(path);
       } else {
-        navigate(`/purchase`);
+        navigate(`/mua-ky-hoc`);
       }
     }
   };
 
   return (
     <header className="py-4 w-full text-white bg-[#465663]">
-      <nav className="container flex items-center justify-between mx-auto">
+      <nav className="container flex justify-between items-center mx-auto">
         <Link to="/">
           <img src="https://daotaolaixehd.com.vn/wp-content/uploads/2016/12/logopng.png" alt="Logo" className="h-10" />
         </Link>
@@ -115,14 +116,14 @@ function Header() {
           ))}
           {user ? (
             <li>
-              <span className="flex items-center px-4 py-2 space-x-1 rounded-sm">
+              <Link to='/my-profile' className="flex items-center px-4 py-2 space-x-1 rounded-sm">
                 <FaUser />
                 <span>{user.userName}</span>
-              </span>
+              </Link>
             </li>
           ) : (
             <li>
-              <Link to="/login" className="flex items-center px-4 py-2 space-x-1 transition-colors rounded-sm hover:text-gray-300 hover:bg-custom-blue-hover">
+              <Link to="/login" className="flex items-center px-4 py-2 space-x-1 rounded-sm transition-colors hover:text-gray-300 hover:bg-custom-blue-hover">
                 <FaUser />
                 <span>Đăng nhập</span>
               </Link>

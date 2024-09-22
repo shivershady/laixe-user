@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 
-import { authService } from '../services/authService';
 import { useState } from 'react';
+import { authService } from '../services/authService';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -17,7 +17,11 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // Validate age input to allow only up to 3 digits
+    if (name === 'age' && value.length > 3) return;
+    if (name === 'phone' && value.length > 11) return;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {

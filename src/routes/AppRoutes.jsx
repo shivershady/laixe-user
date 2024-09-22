@@ -1,9 +1,9 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import Layout from '@layouts/Layout';
 import PrivateRoute from '@components/PrivateRoute';
 import ScrollTop from '@components/ScrollTop';
+import Layout from '@layouts/Layout';
 import { routes_here } from './routes';
 
 export default function AppRoutes() {
@@ -22,7 +22,15 @@ export default function AppRoutes() {
                                             {route.useLayout ? <Layout>{route.element}</Layout> : route.element}
                                         </Suspense>
                                     }
-                                />
+                                >
+                                    {route.children && route.children.map((child, childKey) => (
+                                        <Route
+                                            key={childKey}
+                                            path={child.path}
+                                            element={child.element}
+                                        />
+                                    ))}
+                                </Route>
                             </Route>
                         ) : (
                             <Route
