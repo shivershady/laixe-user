@@ -37,7 +37,7 @@ export default function GroupChat() {
         userName: user.userName,
       };
       socket.send(JSON.stringify(newMsg));
-      setMessages(prevMessages => [...prevMessages, newMsg]);
+      // setMessages(prevMessages => [...prevMessages, newMsg]);
       setNewMessage("");
     }
   }, [newMessage, user.id, user.userName]);
@@ -88,21 +88,21 @@ export default function GroupChat() {
       {!isChatOpen ? (
         <button
           onClick={toggleChat}
-          className="p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="p-3 text-white bg-blue-500 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          <FaComments className="h-6 w-6" />
+          <FaComments className="w-6 h-6" />
         </button>
       ) : (
         <div className="w-[350px] h-[500px] flex flex-col bg-white rounded-lg shadow-lg">
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex justify-between items-center p-4 border-b">
             <h3 className="text-sm font-medium">Group Chat</h3>
             <button onClick={toggleChat} className="text-gray-500 hover:text-gray-700">
-              <FaTimes className="h-4 w-4" />
+              <FaTimes className="w-4 h-4" />
               <span className="sr-only">Close</span>
             </button>
           </div>
-          <div className="flex-grow overflow-hidden">
-            <div ref={chatContainerRef} className="h-full overflow-y-auto p-4">
+          <div className="overflow-hidden flex-grow">
+            <div ref={chatContainerRef} className="overflow-y-auto p-4 h-full">
               <div className="flex flex-col space-y-4">
                 {messages.map((message, index) => (
                   <div key={index} className={`flex flex-col ${message.userName === user.userName ? 'items-end' : 'items-start'}`}>
@@ -110,7 +110,7 @@ export default function GroupChat() {
                       <p className="text-sm font-semibold">{message.userName}</p>
                       <p className="text-sm">{message.content}</p>
                     </div>
-                    <span className="text-xs text-gray-500 mt-1">{new Date(message.sentAt).toLocaleString()}</span>
+                    <span className="mt-1 text-xs text-gray-500">{new Date(message.sentAt).toLocaleString()}</span>
                   </div>
                 ))}
                 <div ref={messagesEndRef} />
@@ -122,7 +122,7 @@ export default function GroupChat() {
               <input
                 type="text"
                 placeholder="Type a message..."
-                className="flex-grow px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-grow px-3 py-2 text-sm rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -131,7 +131,7 @@ export default function GroupChat() {
                 onClick={handleSendMessage}
                 className="p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                <FaPaperPlane className="h-4 w-4" />
+                <FaPaperPlane className="w-4 h-4" />
                 <span className="sr-only">Send</span>
               </button>
             </div>

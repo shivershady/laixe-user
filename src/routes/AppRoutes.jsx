@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import PrivateRoute from '@components/PrivateRoute';
 import ScrollTop from '@components/ScrollTop';
@@ -40,6 +40,7 @@ export default function AppRoutes() {
                             />
                         )
                     ))}
+                    <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </React.Fragment>
         </Suspense>

@@ -1,8 +1,10 @@
+/* eslint-disable no-useless-escape */
+
 import { useEffect, useRef, useState } from 'react';
 
 import { FaCheckCircle } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
 import { examService } from '../../services/examService';
+import { useParams } from 'react-router-dom';
 
 export default function DrivingSimulator() {
   const { examId } = useParams();
@@ -11,6 +13,25 @@ export default function DrivingSimulator() {
   const [watchedVideos, setWatchedVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const iframeRef = useRef(null);
+
+  function getYoutubeEmbedURL(url) {
+    // Biểu thức chính quy để tìm ID video từ các dạng URL khác nhau
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+
+    if (match && match[2].length === 11) {
+      // Nếu tìm thấy ID video hợp lệ
+      return `https://www.youtube.com/embed/${match[2]}`;
+    } else {
+      // Nếu URL đã là dạng embed hoặc không tìm thấy ID hợp lệ
+      const embedMatch = url.match(/^(https?:\/\/)?(www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+      if (embedMatch) {
+        return url; // Trả về nguyên URL nếu đã là dạng embed
+      } else {
+        return null; // Trả về null nếu không phải URL YouTube hợp lệ
+      }
+    }
+  }
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -35,7 +56,7 @@ export default function DrivingSimulator() {
 
   useEffect(() => {
     if (currentVideo && iframeRef.current) {
-      iframeRef.current.src = `${currentVideo.content}?autoplay=1`;
+      iframeRef.current.src = `${getYoutubeEmbedURL(currentVideo.content)}?autoplay=1`;
     }
   }, [currentVideo]);
 
@@ -48,11 +69,11 @@ export default function DrivingSimulator() {
   const progress = (watchedVideos.length / videoList.length) * 100;
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
-    <div className="max-w-4xl p-4 mx-auto">
+    <div className="p-4 mx-auto max-w-4xl min-h-[85vh]">
       <h1 className="mb-6 text-3xl font-bold text-center">Daotaolaixehd.com.vn</h1>
       <div className="mb-6">
         <div className="mb-4 bg-gray-200 aspect-video">
@@ -68,12 +89,12 @@ export default function DrivingSimulator() {
           ></iframe>
         </div>
         <h2 className="mb-2 text-xl font-semibold">{currentVideo?.content}</h2>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+        <div className="mb-2 w-full h-2.5 bg-gray-200 rounded-full">
           <div className="bg-[#5ea5d7] h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
         </div>
         <p className="text-sm text-gray-500">Đã xem {watchedVideos.length} / {videoList.length} video</p>
       </div>
-      <div className="flex flex-wrap justify-start gap-2">
+      <div className="flex flex-wrap gap-2 justify-start">
         {videoList.map((video, index) => (
           <div key={index} className="relative w-8 h-8">
             <button
