@@ -10,10 +10,14 @@ import {
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom"; // Thêm import này
 
+import Calendar from "react-calendar";
+import 'react-calendar/dist/Calendar.css';
 import { useUser } from "../../hooks/UserContext";
+import { classListService } from "../../services/classListService";
 import { coursesService } from "../../services/coursesService";
 import { userService } from "../../services/userService";
 import { formattedDataCourse } from "../../utils/formattedDataCourse";
+import './Calendar.css'; // Tùy chỉnh style để làm nổi bật
 
 export default function MyProfile() {
   const navigate = useNavigate(); // Khởi tạo navigate
@@ -22,7 +26,7 @@ export default function MyProfile() {
   const initialTab = query.get("activeTab") || "info"; // Lấy giá trị activeTab từ query hoặc mặc định là "info"
   const [activeTab, setActiveTab] = useState(initialTab); // Sử dụng initialTab
   const { user, updateUser } = useUser();
-  console.log('🚀 ~ MyProfile ~ user:', user)
+
   const [coursesData, setCoursesData] = useState({});
   const [formData, setFormData] = useState({
     userName: user.userName,
@@ -36,6 +40,81 @@ export default function MyProfile() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const [classes, setClasses] = useState([]);
+
+  useEffect(() => {
+    // Fetch class data from your API
+    const fetchClassData = async () => {
+      // Replace this with your actual API call
+      try {
+        const response = await classListService.getSchedule()
+        const processedData = response.map(classItem => ({
+          id: classItem.classId,
+          name: classItem.className,
+          startDate: new Date(classItem.startDate),
+          endDate: new Date(classItem.endDate),
+          scheduledDays: [classItem.day1, classItem.day2].filter(day => day !== null),
+          attendanceDates: classItem.attendanceRecords
+            .filter(record => record.isPresent)
+            .map(record => {
+              const [year, month, day] = record.attendanceDate.split('T')[0].split('-').map(Number);
+              return new Date(year, month - 1, day);
+            }),
+          absenceDates: classItem.attendanceRecords
+            .filter(record => !record.isPresent)
+            .map(record => {
+              const [year, month, day] = record.attendanceDate.split('T')[0].split('-').map(Number);
+              return new Date(year, month - 1, day);
+            })
+        }));
+
+        setClasses(processedData);
+
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchClassData();
+  }, []);
+
+  const tileClassName = ({ date, view }, classData) => {
+    if (view === 'month') {
+      const dateTime = date.getTime();
+
+      if (classData.attendanceDates.some(d => d.getTime() === dateTime)) {
+        return 'highlight-success';
+      }
+
+      if (classData.absenceDates.some(d => d.getTime() === dateTime)) {
+        return 'highlight-error';
+      }
+
+      if (
+        date >= classData.startDate &&
+        date <= classData.endDate &&
+        classData.scheduledDays.includes(date.getDay() === 0 ? 1 : date.getDay() + 1)
+      ) {
+        return 'scheduled-day';
+      }
+    }
+    return null;
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  const formatScheduledDays = (days) => {
+    const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+    return days.map(day => dayNames[day - 1]).join(', ');
+  };
+
 
   const handleTabChange = (value) => {
     setActiveTab(value);
@@ -156,6 +235,7 @@ export default function MyProfile() {
                   { key: "info", label: "Thông Tin Tài Khoản" },
                   { key: "changePassword", label: "Đổi Mật Khẩu" },
                   { key: "purchasedCourses", label: "Khóa Học Đã Mua" },
+                  { key: "classList", label: "Danh sách lớp học" },
                 ].map((tab) => (
                   <button
                     key={tab.key}
@@ -414,6 +494,29 @@ export default function MyProfile() {
                     </div>
                   </div>
                 )}
+                {activeTab === "classList" && (
+                  <div className="w-full p-6 overflow-auto bg-white rounded-lg">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      {classes.map(classData => (
+                        <div key={classData.id} className="p-4 border rounded-lg">
+                          <h3 className="mb-2 text-lg font-semibold">{classData.name}</h3>
+                          <p>Ngày bắt đầu: {formatDate(classData.startDate)}</p>
+                          <p>Ngày kết thúc: {formatDate(classData.endDate)}</p>
+                          <p>Học vào các ngày: {formatScheduledDays(classData.scheduledDays)}</p>
+                          <div className="mx-auto mt-4 w-fit">
+                            <Calendar
+                              value={new Date()}
+                              tileClassName={({ date, view }) => tileClassName({ date, view }, classData)}
+                              minDate={classData.startDate}
+                              maxDate={classData.endDate}
+                            />
+                          </div>
+                          <Legend />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </main>
@@ -422,3 +525,23 @@ export default function MyProfile() {
     </div>
   );
 }
+
+const Legend = () => (
+  <div className="mt-4 text-sm">
+    <h4 className="mb-2 font-semibold">Chú thích:</h4>
+    <div className="flex items-center space-x-4">
+      <div className="flex items-center">
+        <div className="w-4 h-4 mr-2 bg-black rounded-full"></div>
+        <span>Chưa điểm danh</span>
+      </div>
+      <div className="flex items-center">
+        <div className="w-4 h-4 mr-2 bg-red-500 rounded-full"></div>
+        <span>Đã điểm danh</span>
+      </div>
+      <div className="flex items-center">
+        <div className="w-4 h-4 mr-2 bg-blue-500 rounded-full"></div>
+        <span>Ngày học</span>
+      </div>
+    </div>
+  </div>
+);

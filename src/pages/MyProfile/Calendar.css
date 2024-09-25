@@ -1,0 +1,14 @@
+.react-calendar__tile.highlight-success {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+}
+.react-calendar__tile.highlight-error {
+  background-color: black;
+  color: white;
+  border-radius: 50%;
+}
+.react-calendar__tile.scheduled-day {
+  background-color: #e6f3ff;
+  border-radius: 50%;
+}

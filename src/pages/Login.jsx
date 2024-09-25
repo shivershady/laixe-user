@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 
 import { GoogleLogin } from '@react-oauth/google';
-import { authService } from '../services/authService';
 import { useState } from 'react';
+import { authService } from '../services/authService';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -47,8 +47,8 @@ export default function Login() {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="p-8 space-y-6 w-full max-w-md bg-white rounded-lg shadow-md">
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
                 <h1 className="text-2xl font-bold text-center">Đăng nhập</h1>
                 <p className="text-sm text-center text-gray-600">
                     Nhập thông tin đăng nhập của bạn để truy cập tài khoản
@@ -66,7 +66,7 @@ export default function Login() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                     <div>
@@ -78,22 +78,22 @@ export default function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="px-3 py-2 mt-1 w-full text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="px-4 py-2 w-full text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                        className="w-full px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
                     >
                         Đăng nhập
                     </button>
                 </form>
 
                 <div className="relative">
-                    <div className="flex absolute inset-0 items-center">
+                    <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-gray-300"></div>
                     </div>
-                    <div className="flex relative justify-center text-sm">
+                    <div className="relative flex justify-center text-sm">
                         <span className="px-2 text-gray-500 bg-white">HOẶC TIẾP TỤC VỚI</span>
                     </div>
                 </div>
