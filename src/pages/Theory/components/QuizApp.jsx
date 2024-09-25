@@ -1,15 +1,15 @@
 'use client'
 
-import { FaBook, FaClock, FaExclamationCircle } from "react-icons/fa";
 import { useEffect, useState } from 'react';
+import { FaBook, FaClock, FaExclamationCircle } from "react-icons/fa";
 
-export default function QuizApp({ onClose, questions = [] }) {
+export default function QuizApp({ onClose, questions = [], time }) {
   const [started, setStarted] = useState(false)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswers, setSelectedAnswers] = useState([])
   const [shuffledQuestions, setShuffledQuestions] = useState([])
   const [finished, setFinished] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 phút
+  const [timeLeft, setTimeLeft] = useState(time * 60); // 20 phút
 
   useEffect(() => {
     let timer;
@@ -62,7 +62,7 @@ export default function QuizApp({ onClose, questions = [] }) {
   const calculateResults = () => {
     let correct = 0
     shuffledQuestions.forEach((q, index) => {
-      const correctAnswer = q.answers.find(answer => answer.type).answerId;
+      const correctAnswer = q.answers.find(answer => answer.type)?.answerId;
       // Kiểm tra nếu người dùng đã chọn câu trả lời
       if (selectedAnswers[index] !== undefined && correctAnswer === selectedAnswers[index]) {
         correct++
@@ -80,20 +80,20 @@ export default function QuizApp({ onClose, questions = [] }) {
 
   if (!started) {
     return (
-      <div className="w-full max-w-md p-6 bg-white rounded-lg">
+      <div className="p-6 w-full max-w-md min-w-[50vw] bg-white rounded-lg">
         <h2 className="mb-4 text-2xl font-bold">Bài Thi Thử</h2>
         <div className="max-h-[60vh] overflow-auto mb-4">
           <p className="mb-4 font-semibold text-center">Bạn đã sẵn sàng để bắt đầu bài thi thử chưa?</p>
           <div className="flex items-center mb-2 text-gray-600">
-            <FaClock className="w-5 h-5 mr-2" />
-            <p>Thời gian: 20 phút</p>
+            <FaClock className="mr-2 w-5 h-5" />
+            <p>Thời gian: {time} phút</p>
           </div>
           <div className="flex items-center mb-2 text-gray-600">
-            <FaBook className="w-5 h-5 mr-2" />
+            <FaBook className="mr-2 w-5 h-5" />
             <p>Số câu hỏi: {questions.length} câu</p>
           </div>
           <div className="flex items-center mb-2 text-gray-600">
-            <FaExclamationCircle className="w-5 h-5 mr-2" />
+            <FaExclamationCircle className="mr-2 w-5 h-5" />
             <p>Yêu cầu đạt: {Math.ceil(questions.length * 0.5)}/{questions.length} câu đúng</p>
           </div>
           <p className="text-sm text-gray-600">
@@ -102,7 +102,7 @@ export default function QuizApp({ onClose, questions = [] }) {
         </div>
         <div className="flex justify-end space-x-4">
           <button
-            className="px-4 py-2 transition-colors border border-gray-300 rounded-lg hover:bg-gray-100"
+            className="px-4 py-2 rounded-lg border border-gray-300 transition-colors hover:bg-gray-100"
             onClick={onClose}
           >
             Hủy
@@ -121,7 +121,7 @@ export default function QuizApp({ onClose, questions = [] }) {
   if (finished) {
     const correctAnswers = calculateResults();
     return (
-      <div className="min-w-[350px] mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="min-w-[50vw] mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="p-6">
           <h2 className="mb-4 text-2xl font-bold">Kết Quả</h2>
           <p className="mb-4">Bạn đã trả lời đúng {correctAnswers}/{shuffledQuestions.length} câu</p>
@@ -136,8 +136,8 @@ export default function QuizApp({ onClose, questions = [] }) {
                 <div key={q.questionId} className="mt-4">
                   <h3 className="font-semibold">{index + 1}. {q.content}</h3>
                   <p className="mb-2"><strong>Câu trả lời của bạn:</strong> {userAnswerContent}</p>
-                  <p className="mb-2"><strong>Câu trả lời đúng:</strong> {q.answers.find(answer => answer.type).content}</p>
-                  <p className="mb-2">{userAnswerId === q.answers.find(answer => answer.type).answerId ? '✅' : '❌'}</p>
+                  <p className="mb-2"><strong>Câu trả lời đúng:</strong> {q.answers.find(answer => answer?.type)?.content}</p>
+                  <p className="mb-2">{userAnswerId === q.answers.find(answer => answer?.type)?.answerId ? '✅' : '❌'}</p>
                 </div>
               );
             })}
@@ -157,7 +157,7 @@ export default function QuizApp({ onClose, questions = [] }) {
           ) : (
             <>
               <button
-                className="w-full px-4 py-2 transition-colors border border-gray-300 rounded-lg hover:bg-gray-100"
+                className="px-4 py-2 w-full rounded-lg border border-gray-300 transition-colors hover:bg-gray-100"
                 onClick={onClose}
               >
                 Hủy
@@ -173,7 +173,7 @@ export default function QuizApp({ onClose, questions = [] }) {
   const currentQuestion = shuffledQuestions[currentQuestionIndex]
 
   return (
-    <div className="w-[350px] mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="w-[50vw] mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="p-6">
         <h1 className="mb-4 text-2xl font-extrabold">
           Thời gian còn lại: <span className="text-red-500">{formatTime(timeLeft)}</span>
@@ -182,6 +182,13 @@ export default function QuizApp({ onClose, questions = [] }) {
           Câu hỏi {currentQuestionIndex + 1}/{shuffledQuestions.length}
         </h2>
         <p className="mb-4 text-lg font-semibold">{currentQuestion.content}</p>
+        {currentQuestion.file && (
+          <img
+            src={currentQuestion.file}
+            alt={`Question`}
+            className="object-cover mr-4 w-96 h-auto rounded"
+          />
+        )}
         <div className="space-y-2">
           {currentQuestion.answers.map((option, index) => (
             <div key={option.answerId} className="flex items-center space-x-2">

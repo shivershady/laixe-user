@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { FaBook, FaChevronRight } from 'react-icons/fa';
 
-import { useParams } from 'react-router-dom'; // Thêm import useParams
-import { examService } from '../../services/examService'; // Thêm import examService
-import QuizApp from './components/QuizApp'; // Thêm import cho TestDialog
+import { useParams } from 'react-router-dom';
+import { examService } from '../../services/examService';
+import QuizApp from './components/QuizApp';
 
 const Theory = () => {
-  const { examId } = useParams(); // Lấy examId từ router
-  const [questions, setQuestions] = useState([]); // Khởi tạo state cho questions
-  const [showDialog, setShowDialog] = useState(false); // Thêm dòng này để định nghĩa showDialog
+  const { examId } = useParams();
+  const [questions, setQuestions] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [time, setTime] = useState(0)
 
   useEffect(() => {
     const fetchExamData = async () => {
@@ -18,6 +19,7 @@ const Theory = () => {
         const response = await examService.getExam(examId);
         const data = await response.data.questions;
         setQuestions(data);
+        setTime(response.data.time)
       } catch (error) {
         console.error("Error fetching exam data:", error);
       } finally {
@@ -29,7 +31,7 @@ const Theory = () => {
   }, [examId]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
@@ -38,18 +40,27 @@ const Theory = () => {
 
       <div className="grid gap-6 mb-6">
         {questions.map((q, index) => (
-          <div key={q.id} className="p-6 transition-shadow bg-white rounded-lg shadow-md hover:shadow-lg">
-            <div className="mb-4">
-              <h2 className="flex items-center text-xl font-semibold">
-                <span className="flex items-center justify-center w-8 h-8 mr-3 text-white bg-[#5ea5d7] rounded-full">
-                  {index + 1}
-                </span>
-                {q.content}
-              </h2>
+          <div key={q.id} className="p-6 bg-white rounded-lg shadow-md transition-shadow hover:shadow-lg">
+            <div className="flex flex-col items-center mb-4 space-y-2">
+              <div className="flex-1">
+                <h2 className="flex items-center text-xl font-semibold">
+                  <span className="flex items-center justify-center w-8 h-8 mr-3 text-white bg-[#5ea5d7] rounded-full">
+                    {index + 1}
+                  </span>
+                  {q.content}
+                </h2>
+              </div>
+              {q.file && (
+                <img
+                  src={q.file}
+                  alt={`Question ${index + 1}`}
+                  className="object-cover mr-4 w-96 h-auto rounded"
+                />
+              )}
             </div>
             <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
               {q.answers.map((answer, answerIndex) => (
-                <div key={answerIndex} className="flex items-center p-3 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200">
+                <div key={answerIndex} className="flex items-center p-3 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200">
                   <span className="mr-2 font-semibold">
                     {String.fromCharCode(65 + answerIndex)}.
                   </span>
@@ -58,7 +69,7 @@ const Theory = () => {
               ))}
             </div>
             <div className="flex items-center text-sm font-medium">
-              <FaBook className="w-4 h-4 mr-2" />
+              <FaBook className="mr-2 w-4 h-4" />
               Đáp án đúng: {String.fromCharCode(65 + q.answers.findIndex(answer => answer.type))}
             </div>
           </div>
@@ -70,14 +81,15 @@ const Theory = () => {
         className="flex items-center justify-center w-full py-6 text-lg text-white transition-colors bg-[#5ea5d7] rounded-lg hover:bg-blue-600"
       >
         Bắt Đầu Thi Thử
-        <FaChevronRight className="w-5 h-5 ml-2" />
+        <FaChevronRight className="ml-2 w-5 h-5" />
       </button>
 
       {showDialog && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 bg-black">
+        <div className="flex fixed inset-0 justify-center items-center p-4 bg-black bg-opacity-50">
           <QuizApp
             onClose={() => setShowDialog(false)}
             questions={questions}
+            time={time}
           />
         </div>
       )}

@@ -59,6 +59,7 @@ export default function MyProfile() {
     event.preventDefault();
     try {
       const response = await userService.changeUser(formData);
+      alert("cập nhật thông tin thành công");
       updateUser(response);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -107,33 +108,33 @@ export default function MyProfile() {
   }, []);
 
   return (
-    <div className="py-8 min-h-screen bg-gray-100">
+    <div className="min-h-screen py-8 bg-gray-100">
       <div className="container px-4 mx-auto">
         <h1 className="mb-4 text-2xl font-bold">Hồ Sơ Của Tôi</h1>
         <div className="flex flex-col gap-6 md:flex-row">
           <aside className="w-full md:w-1/4">
             <div className="p-6 bg-white rounded-lg shadow-md">
               <div className="flex flex-col items-center">
-                <FaUser className="w-36 h-36 text-gray-300" />
+                <FaUser className="text-gray-300 w-36 h-36" />
                 <h2 className="mt-4 text-xl font-semibold">{user.userName}</h2>
                 <p className="text-sm text-gray-600">{user.roles[0]}</p>
               </div>
               <hr className="my-4" />
               <div className="space-y-2">
                 <div className="flex items-center">
-                  <FaCalendarAlt className="mr-2 w-4 h-4 text-gray-600" />
+                  <FaCalendarAlt className="w-4 h-4 mr-2 text-gray-600" />
                   <span>{user.age} tuổi</span>
                 </div>
                 <div className="flex items-center">
-                  <FaPhone className="mr-2 w-4 h-4 text-gray-600" />
+                  <FaPhone className="w-4 h-4 mr-2 text-gray-600" />
                   <span>{user.phoneNumber}</span>
                 </div>
                 <div className="flex items-center">
-                  <FaEnvelope className="mr-2 w-4 h-4 text-gray-600" />
+                  <FaEnvelope className="w-4 h-4 mr-2 text-gray-600" />
                   <span>{user.email}</span>
                 </div>
                 <div className="flex items-center">
-                  <FaMapMarkerAlt className="mr-2 w-4 h-4 text-gray-600" />
+                  <FaMapMarkerAlt className="w-4 h-4 mr-2 text-gray-600" />
                   <span>{user.address}</span>
                 </div>
               </div>
@@ -192,7 +193,7 @@ export default function MyProfile() {
                             type="text"
                             value={formData.userName}
                             onChange={handleInputChange}
-                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                           />
                         </div>
                         <div>
@@ -208,7 +209,7 @@ export default function MyProfile() {
                             type="number"
                             value={formData.age}
                             onChange={handleInputChange}
-                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                           />
                         </div>
                       </div>
@@ -225,7 +226,7 @@ export default function MyProfile() {
                           type="tel"
                           value={formData.phoneNumber}
                           onChange={handleInputChange}
-                          className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                         />
                       </div>
                       <div>
@@ -241,7 +242,7 @@ export default function MyProfile() {
                           type="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                           disabled={isEmailConfirmed}
                         />
                       </div>
@@ -258,7 +259,7 @@ export default function MyProfile() {
                           type="text"
                           value={formData.address}
                           onChange={handleInputChange}
-                          className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                         />
                       </div>
                       <button
@@ -295,7 +296,7 @@ export default function MyProfile() {
                               currentPassword: e.target.value,
                             })
                           }
-                          className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                           disabled={isEmailConfirmed}
                         />
                       </div>
@@ -317,7 +318,7 @@ export default function MyProfile() {
                               newPassword: e.target.value,
                             })
                           }
-                          className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                           disabled={isEmailConfirmed}
                         />
                       </div>
@@ -339,7 +340,7 @@ export default function MyProfile() {
                               confirmPassword: e.target.value,
                             })
                           }
-                          className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                           disabled={isEmailConfirmed}
                         />
                       </div>
@@ -382,7 +383,7 @@ export default function MyProfile() {
                                   {course.exams.map((exam) => (
                                     <li
                                       key={exam.id}
-                                      className="flex justify-between items-center p-2 bg-gray-100 rounded-md"
+                                      className="flex items-center justify-between p-2 bg-gray-100 rounded-md"
                                     >
                                       <span>
                                         {exam.name} (
