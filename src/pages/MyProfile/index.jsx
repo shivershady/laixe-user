@@ -12,6 +12,8 @@ import { useLocation, useNavigate } from "react-router-dom"; // Thêm import nà
 
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
+import { ToastContainer, toast } from 'react-toastify'; // Thêm import này
+import 'react-toastify/dist/ReactToastify.css'; // Thêm import này
 import { useUser } from "../../hooks/UserContext";
 import { classListService } from "../../services/classListService";
 import { coursesService } from "../../services/coursesService";
@@ -138,18 +140,18 @@ export default function MyProfile() {
     event.preventDefault();
     try {
       const response = await userService.changeUser(formData);
-      alert("cập nhật thông tin thành công");
+      toast.success("Cập nhật thông tin thành công"); // Thay alert bằng toast
       updateUser(response);
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Có lỗi xảy ra khi cập nhật thông tin.");
+      toast.error("Có lỗi xảy ra khi cập nhật thông tin."); // Thay alert bằng toast
     }
   };
 
   const handleChangePassword = async (event) => {
     event.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("Mật khẩu mới và xác nhận mật khẩu không khớp.");
+      toast.error("Mật khẩu mới và xác nhận mật khẩu không khớp."); // Thay alert bằng toast
       return;
     }
 
@@ -158,11 +160,11 @@ export default function MyProfile() {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword,
       });
-      alert("Mật khẩu đã được thay đổi thành công!");
+      toast.success("Mật khẩu đã được thay đổi thành công!"); // Thay alert bằng toast
       handleLogOut();
     } catch (error) {
       console.error("Error changing password:", error);
-      alert("Có lỗi xảy ra khi thay đổi mật khẩu.");
+      toast.error("Có lỗi xảy ra khi thay đổi mật khẩu."); // Thay alert bằng toast
     }
   };
 
@@ -187,342 +189,345 @@ export default function MyProfile() {
   }, []);
 
   return (
-    <div className="min-h-screen py-8 bg-gray-100">
-      <div className="container px-4 mx-auto">
-        <h1 className="mb-4 text-2xl font-bold">Hồ Sơ Của Tôi</h1>
-        <div className="flex flex-col gap-6 md:flex-row">
-          <aside className="w-full md:w-1/4">
-            <div className="p-6 bg-white rounded-lg shadow-md">
-              <div className="flex flex-col items-center">
-                <FaUser className="text-gray-300 w-36 h-36" />
-                <h2 className="mt-4 text-xl font-semibold">{user.userName}</h2>
-                <p className="text-sm text-gray-600">{user.roles[0]}</p>
-              </div>
-              <hr className="my-4" />
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <FaCalendarAlt className="w-4 h-4 mr-2 text-gray-600" />
-                  <span>{user.age} tuổi</span>
+    <>
+      <ToastContainer /> {/* Thêm ToastContainer vào return */}
+      <div className="py-8 min-h-screen bg-gray-100">
+        <div className="container px-4 mx-auto">
+          <h1 className="mb-4 text-2xl font-bold">Hồ Sơ Của Tôi</h1>
+          <div className="flex flex-col gap-6 md:flex-row">
+            <aside className="w-full md:w-1/4">
+              <div className="p-6 bg-white rounded-lg shadow-md">
+                <div className="flex flex-col items-center">
+                  <FaUser className="w-36 h-36 text-gray-300" />
+                  <h2 className="mt-4 text-xl font-semibold">{user.userName}</h2>
+                  <p className="text-sm text-gray-600">{user.roles[0]}</p>
                 </div>
-                <div className="flex items-center">
-                  <FaPhone className="w-4 h-4 mr-2 text-gray-600" />
-                  <span>{user.phoneNumber}</span>
+                <hr className="my-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="mr-2 w-4 h-4 text-gray-600" />
+                    <span>{user.age} tuổi</span>
+                  </div>
+                  <div className="flex items-center">
+                    <FaPhone className="mr-2 w-4 h-4 text-gray-600" />
+                    <span>{user.phoneNumber}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <FaEnvelope className="mr-2 w-4 h-4 text-gray-600" />
+                    <span>{user.email}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <FaMapMarkerAlt className="mr-2 w-4 h-4 text-gray-600" />
+                    <span>{user.address}</span>
+                  </div>
                 </div>
+                <hr className="my-4" />
                 <div className="flex items-center">
-                  <FaEnvelope className="w-4 h-4 mr-2 text-gray-600" />
-                  <span>{user.email}</span>
-                </div>
-                <div className="flex items-center">
-                  <FaMapMarkerAlt className="w-4 h-4 mr-2 text-gray-600" />
-                  <span>{user.address}</span>
-                </div>
-              </div>
-              <hr className="my-4" />
-              <div className="flex items-center">
-                <button
-                  className={`flex-1 py-2 px-4 text-center bg-[#7ab9e6] text-white`}
-                  onClick={handleLogOut}
-                >
-                  Đăng xuất
-                </button>
-              </div>
-            </div>
-          </aside>
-          <main className="flex-1">
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="flex border-b">
-                {[
-                  { key: "info", label: "Thông Tin Tài Khoản" },
-                  { key: "changePassword", label: "Đổi Mật Khẩu" },
-                  { key: "purchasedCourses", label: "Khóa Học Đã Mua" },
-                  { key: "classList", label: "Danh sách lớp học" },
-                ].map((tab) => (
                   <button
-                    key={tab.key}
-                    className={`flex-1 py-2 px-4 text-center ${activeTab === tab.key
-                      ? "bg-[#7ab9e6] text-white"
-                      : "text-gray-600 hover:bg-gray-100"
-                      }`}
-                    onClick={() => handleTabChange(tab.key)}
+                    className={`flex-1 py-2 px-4 text-center bg-[#7ab9e6] text-white`}
+                    onClick={handleLogOut}
                   >
-                    {tab.label}
+                    Đăng xuất
                   </button>
-                ))}
+                </div>
               </div>
-              <div className="p-6">
-                {activeTab === "info" && (
-                  <div>
-                    <h2 className="mb-2 text-xl font-semibold">
-                      Thông Tin Tài Khoản
-                    </h2>
-                    <p className="mb-2 text-gray-600">
-                      Cập nhật thông tin cá nhân của bạn tại đây.
-                    </p>
-                    <form className="space-y-4" onSubmit={handleChangeProfile}>
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div>
-                          <label
-                            htmlFor="name"
-                            className="block mb-1 text-sm font-medium text-gray-700"
-                          >
-                            Họ và Tên
-                          </label>
-                          <input
-                            id="name"
-                            name="userName"
-                            type="text"
-                            value={formData.userName}
-                            onChange={handleInputChange}
-                            className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          />
-                        </div>
-                        <div>
-                          <label
-                            htmlFor="age"
-                            className="block mb-1 text-sm font-medium text-gray-700"
-                          >
-                            Tuổi
-                          </label>
-                          <input
-                            id="age"
-                            name="age"
-                            type="number"
-                            value={formData.age}
-                            onChange={handleInputChange}
-                            className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="phone"
-                          className="block mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Số Điện Thoại
-                        </label>
-                        <input
-                          id="phone"
-                          name="phoneNumber"
-                          type="tel"
-                          value={formData.phoneNumber}
-                          onChange={handleInputChange}
-                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="email"
-                          className="block mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Email
-                        </label>
-                        <input
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          disabled={isEmailConfirmed}
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="address"
-                          className="block mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Địa Chỉ
-                        </label>
-                        <input
-                          id="address"
-                          name="address"
-                          type="text"
-                          value={formData.address}
-                          onChange={handleInputChange}
-                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        className="w-full bg-[#7ab9e6] text-white py-1 px-3 rounded-md hover:bg-[#5ea5d7] focus:outline-none focus:ring-2 focus:ring-[#7ab9e6] focus:ring-opacity-50 h-8"
-                      >
-                        Lưu Thông Tin
-                      </button>
-                    </form>
-                  </div>
-                )}
-                {activeTab === "changePassword" && (
-                  <div>
-                    <h2 className="mb-2 text-xl font-semibold">Đổi Mật Khẩu</h2>
-                    <p className="mb-4 text-gray-600">
-                      Cập nhật mật khẩu của bạn để bảo mật tài khoản.
-                    </p>
-                    <form className="space-y-4" onSubmit={handleChangePassword}>
-                      <div>
-                        <label
-                          htmlFor="current-password"
-                          className="block mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Mật Khẩu Hiện Tại
-                        </label>
-                        <input
-                          id="current-password"
-                          name="currentPassword"
-                          type="password"
-                          value={passwordData.currentPassword}
-                          onChange={(e) =>
-                            setPasswordData({
-                              ...passwordData,
-                              currentPassword: e.target.value,
-                            })
-                          }
-                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          disabled={isEmailConfirmed}
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="new-password"
-                          className="block mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Mật Khẩu Mới
-                        </label>
-                        <input
-                          id="new-password"
-                          name="newPassword"
-                          type="password"
-                          value={passwordData.newPassword}
-                          onChange={(e) =>
-                            setPasswordData({
-                              ...passwordData,
-                              newPassword: e.target.value,
-                            })
-                          }
-                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          disabled={isEmailConfirmed}
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="confirm-password"
-                          className="block mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Xác Nhận Mật Khẩu Mới
-                        </label>
-                        <input
-                          id="confirm-password"
-                          name="confirmPassword"
-                          type="password"
-                          value={passwordData.confirmPassword}
-                          onChange={(e) =>
-                            setPasswordData({
-                              ...passwordData,
-                              confirmPassword: e.target.value,
-                            })
-                          }
-                          className="block w-full h-10 px-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          disabled={isEmailConfirmed}
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        className={`w-full ${!isEmailConfirmed ? 'bg-[#7ab9e6] hover:bg-[#5ea5d7] cursor-pointer' : 'bg-gray-500 hover:bg-gray-600 cursor-not-allowed'} text-white py-2 px-4 rounded-md  focus:outline-none focus:ring-2 focus:ring-[#7ab9e6] focus:ring-opacity-50 h-10`}
-                        disabled={isEmailConfirmed}
-                      >
-                        Đổi Mật Khẩu
-                      </button>
-                    </form>
-                  </div>
-                )}
-                {activeTab === "purchasedCourses" && (
-                  <div>
-                    <h2 className="mb-2 text-xl font-semibold">
-                      Khóa Học Đã Mua
-                    </h2>
-                    <p className="mb-4 text-gray-600">
-                      Danh sách các khóa học bạn đã đăng ký.
-                    </p>
-                    <div className="space-y-6">
-                      {Object.entries(coursesData).map(
-                        ([vehicleType, data]) => (
-                          <div key={vehicleType}>
-                            <h3 className="flex items-center mb-2 text-lg font-semibold">
-                              {vehicleType === "car" ? (
-                                <FaCar className="mr-2" />
-                              ) : (
-                                <FaMotorcycle className="mr-2" />
-                              )}
-                              {data.title}
-                            </h3>
-                            {data.courses.map((course) => (
-                              <div key={course.id} className="mb-4">
-                                <h4 className="mb-2 font-medium">
-                                  {course.name}
-                                </h4>
-                                <ul className="space-y-2">
-                                  {course.exams.map((exam) => (
-                                    <li
-                                      key={exam.id}
-                                      className="flex items-center justify-between p-2 bg-gray-100 rounded-md"
-                                    >
-                                      <span>
-                                        {exam.name} (
-                                        {exam.type === "theory"
-                                          ? "Lý thuyết"
-                                          : "Mô phỏng"}
-                                        )
-                                      </span>
-                                      <button
-                                        onClick={() => handlePageLearn(exam)}
-                                        className="bg-[#7ab9e6] text-white py-1 px-3 rounded-md text-sm hover:bg-[#5ea5d7]"
-                                      >
-                                        Học ngay
-                                      </button>
-                                    </li>
-                                  ))}
-                                  {course.exams.length === 0 && (
-                                    <li className="p-2 text-gray-500 bg-gray-100 rounded-md">
-                                      Chưa có bài thi cho khóa học này
-                                    </li>
-                                  )}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                )}
-                {activeTab === "classList" && (
-                  <div className="w-full p-6 overflow-auto bg-white rounded-lg">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      {classes.map(classData => (
-                        <div key={classData.id} className="p-4 border rounded-lg">
-                          <h3 className="mb-2 text-lg font-semibold">{classData.name}</h3>
-                          <p>Ngày bắt đầu: {formatDate(classData.startDate)}</p>
-                          <p>Ngày kết thúc: {formatDate(classData.endDate)}</p>
-                          <p>Học vào các ngày: {formatScheduledDays(classData.scheduledDays)}</p>
-                          <div className="mx-auto mt-4 w-fit">
-                            <Calendar
-                              value={new Date()}
-                              tileClassName={({ date, view }) => tileClassName({ date, view }, classData)}
-                              minDate={classData.startDate}
-                              maxDate={classData.endDate}
+            </aside>
+            <main className="flex-1">
+              <div className="bg-white rounded-lg shadow-md">
+                <div className="flex border-b">
+                  {[
+                    { key: "info", label: "Thông Tin Tài Khoản" },
+                    { key: "changePassword", label: "Đổi Mật Khẩu" },
+                    { key: "purchasedCourses", label: "Khóa Học Đã Mua" },
+                    { key: "classList", label: "Danh sách lớp học" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      className={`flex-1 py-2 px-4 text-center ${activeTab === tab.key
+                        ? "bg-[#7ab9e6] text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                        }`}
+                      onClick={() => handleTabChange(tab.key)}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="p-6">
+                  {activeTab === "info" && (
+                    <div>
+                      <h2 className="mb-2 text-xl font-semibold">
+                        Thông Tin Tài Khoản
+                      </h2>
+                      <p className="mb-2 text-gray-600">
+                        Cập nhật thông tin cá nhân của bạn tại đây.
+                      </p>
+                      <form className="space-y-4" onSubmit={handleChangeProfile}>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <div>
+                            <label
+                              htmlFor="name"
+                              className="block mb-1 text-sm font-medium text-gray-700"
+                            >
+                              Họ và Tên
+                            </label>
+                            <input
+                              id="name"
+                              name="userName"
+                              type="text"
+                              value={formData.userName}
+                              onChange={handleInputChange}
+                              className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                             />
                           </div>
-                          <Legend />
+                          <div>
+                            <label
+                              htmlFor="age"
+                              className="block mb-1 text-sm font-medium text-gray-700"
+                            >
+                              Tuổi
+                            </label>
+                            <input
+                              id="age"
+                              name="age"
+                              type="number"
+                              value={formData.age}
+                              onChange={handleInputChange}
+                              className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            />
+                          </div>
                         </div>
-                      ))}
+                        <div>
+                          <label
+                            htmlFor="phone"
+                            className="block mb-1 text-sm font-medium text-gray-700"
+                          >
+                            Số Điện Thoại
+                          </label>
+                          <input
+                            id="phone"
+                            name="phoneNumber"
+                            type="tel"
+                            value={formData.phoneNumber}
+                            onChange={handleInputChange}
+                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="email"
+                            className="block mb-1 text-sm font-medium text-gray-700"
+                          >
+                            Email
+                          </label>
+                          <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            disabled={isEmailConfirmed}
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="address"
+                            className="block mb-1 text-sm font-medium text-gray-700"
+                          >
+                            Địa Chỉ
+                          </label>
+                          <input
+                            id="address"
+                            name="address"
+                            type="text"
+                            value={formData.address}
+                            onChange={handleInputChange}
+                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          className="w-full bg-[#7ab9e6] text-white py-1 px-3 rounded-md hover:bg-[#5ea5d7] focus:outline-none focus:ring-2 focus:ring-[#7ab9e6] focus:ring-opacity-50 h-8"
+                        >
+                          Lưu Thông Tin
+                        </button>
+                      </form>
                     </div>
-                  </div>
-                )}
+                  )}
+                  {activeTab === "changePassword" && (
+                    <div>
+                      <h2 className="mb-2 text-xl font-semibold">Đổi Mật Khẩu</h2>
+                      <p className="mb-4 text-gray-600">
+                        Cập nhật mật khẩu của bạn để bảo mật tài khoản.
+                      </p>
+                      <form className="space-y-4" onSubmit={handleChangePassword}>
+                        <div>
+                          <label
+                            htmlFor="current-password"
+                            className="block mb-1 text-sm font-medium text-gray-700"
+                          >
+                            Mật Khẩu Hiện Tại
+                          </label>
+                          <input
+                            id="current-password"
+                            name="currentPassword"
+                            type="password"
+                            value={passwordData.currentPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                currentPassword: e.target.value,
+                              })
+                            }
+                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            disabled={isEmailConfirmed}
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="new-password"
+                            className="block mb-1 text-sm font-medium text-gray-700"
+                          >
+                            Mật Khẩu Mới
+                          </label>
+                          <input
+                            id="new-password"
+                            name="newPassword"
+                            type="password"
+                            value={passwordData.newPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                newPassword: e.target.value,
+                              })
+                            }
+                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            disabled={isEmailConfirmed}
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="confirm-password"
+                            className="block mb-1 text-sm font-medium text-gray-700"
+                          >
+                            Xác Nhận Mật Khẩu Mới
+                          </label>
+                          <input
+                            id="confirm-password"
+                            name="confirmPassword"
+                            type="password"
+                            value={passwordData.confirmPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                confirmPassword: e.target.value,
+                              })
+                            }
+                            className="block px-3 mt-1 w-full h-10 rounded-md border border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            disabled={isEmailConfirmed}
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          className={`w-full ${!isEmailConfirmed ? 'bg-[#7ab9e6] hover:bg-[#5ea5d7] cursor-pointer' : 'bg-gray-500 hover:bg-gray-600 cursor-not-allowed'} text-white py-2 px-4 rounded-md  focus:outline-none focus:ring-2 focus:ring-[#7ab9e6] focus:ring-opacity-50 h-10`}
+                          disabled={isEmailConfirmed}
+                        >
+                          Đổi Mật Khẩu
+                        </button>
+                      </form>
+                    </div>
+                  )}
+                  {activeTab === "purchasedCourses" && (
+                    <div>
+                      <h2 className="mb-2 text-xl font-semibold">
+                        Khóa Học Đã Mua
+                      </h2>
+                      <p className="mb-4 text-gray-600">
+                        Danh sách các khóa học bạn đã đăng ký.
+                      </p>
+                      <div className="space-y-6">
+                        {Object.entries(coursesData).map(
+                          ([vehicleType, data]) => (
+                            <div key={vehicleType}>
+                              <h3 className="flex items-center mb-2 text-lg font-semibold">
+                                {vehicleType === "car" ? (
+                                  <FaCar className="mr-2" />
+                                ) : (
+                                  <FaMotorcycle className="mr-2" />
+                                )}
+                                {data.title}
+                              </h3>
+                              {data.courses.map((course) => (
+                                <div key={course.id} className="mb-4">
+                                  <h4 className="mb-2 font-medium">
+                                    {course.name}
+                                  </h4>
+                                  <ul className="space-y-2">
+                                    {course.exams.map((exam) => (
+                                      <li
+                                        key={exam.id}
+                                        className="flex justify-between items-center p-2 bg-gray-100 rounded-md"
+                                      >
+                                        <span>
+                                          {exam.name} (
+                                          {exam.type === "theory"
+                                            ? "Lý thuyết"
+                                            : "Mô phỏng"}
+                                          )
+                                        </span>
+                                        <button
+                                          onClick={() => handlePageLearn(exam)}
+                                          className="bg-[#7ab9e6] text-white py-1 px-3 rounded-md text-sm hover:bg-[#5ea5d7]"
+                                        >
+                                          Học ngay
+                                        </button>
+                                      </li>
+                                    ))}
+                                    {course.exams.length === 0 && (
+                                      <li className="p-2 text-gray-500 bg-gray-100 rounded-md">
+                                        Chưa có bài thi cho khóa học này
+                                      </li>
+                                    )}
+                                  </ul>
+                                </div>
+                              ))}
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {activeTab === "classList" && (
+                    <div className="overflow-auto p-6 w-full bg-white rounded-lg">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {classes.map(classData => (
+                          <div key={classData.id} className="p-4 rounded-lg border">
+                            <h3 className="mb-2 text-lg font-semibold">{classData.name}</h3>
+                            <p>Ngày bắt đầu: {formatDate(classData.startDate)}</p>
+                            <p>Ngày kết thúc: {formatDate(classData.endDate)}</p>
+                            <p>Học vào các ngày: {formatScheduledDays(classData.scheduledDays)}</p>
+                            <div className="mx-auto mt-4 w-fit">
+                              <Calendar
+                                value={new Date()}
+                                tileClassName={({ date, view }) => tileClassName({ date, view }, classData)}
+                                minDate={classData.startDate}
+                                maxDate={classData.endDate}
+                              />
+                            </div>
+                            <Legend />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </main>
+            </main>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -531,15 +536,15 @@ const Legend = () => (
     <h4 className="mb-2 font-semibold">Chú thích:</h4>
     <div className="flex items-center space-x-4">
       <div className="flex items-center">
-        <div className="w-4 h-4 mr-2 bg-black rounded-full"></div>
+        <div className="mr-2 w-4 h-4 bg-black rounded-full"></div>
         <span>Chưa điểm danh</span>
       </div>
       <div className="flex items-center">
-        <div className="w-4 h-4 mr-2 bg-red-500 rounded-full"></div>
+        <div className="mr-2 w-4 h-4 bg-red-500 rounded-full"></div>
         <span>Đã điểm danh</span>
       </div>
       <div className="flex items-center">
-        <div className="w-4 h-4 mr-2 bg-blue-500 rounded-full"></div>
+        <div className="mr-2 w-4 h-4 bg-blue-500 rounded-full"></div>
         <span>Ngày học</span>
       </div>
     </div>
