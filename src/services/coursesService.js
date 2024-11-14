@@ -8,4 +8,7 @@ export const coursesService = {
   getBoughtCourses: () => {
     return Axios.get('api/courses/all/buyed');
   },
+  GetCoursesNotPurchasedYet: () => {
+    return Axios.get('api/courses/all/not-purchased-yet');
+  }
 };

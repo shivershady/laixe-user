@@ -12,7 +12,7 @@ export default function DrivingCourses() {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const response = await coursesService.getCourses(); // Gọi API để lấy dữ liệu khóa học
+      const response = await coursesService.getCoursesNotPurchasedYet(); // Gọi API để lấy dữ liệu khóa học
       console.log('🚀 ~ fetchCourses ~ response:', response)
       setCoursesData(formattedDataCourse(response.data)); // Cập nhật state với dữ liệu đã định dạng
     };
