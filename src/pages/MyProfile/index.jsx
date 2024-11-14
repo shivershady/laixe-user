@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from "react";
+import 'react-calendar/dist/Calendar.css';
+import 'react-toastify/dist/ReactToastify.css'; // Thêm import này
+import './Calendar.css'; // Tùy chỉnh style để làm nổi bật
+
 import {
   FaCalendarAlt,
   FaCar,
@@ -8,18 +11,16 @@ import {
   FaPhone,
   FaUser,
 } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from 'react-toastify'; // Thêm import này
 import { useLocation, useNavigate } from "react-router-dom"; // Thêm import này
 
 import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css';
-import { ToastContainer, toast } from 'react-toastify'; // Thêm import này
-import 'react-toastify/dist/ReactToastify.css'; // Thêm import này
-import { useUser } from "../../hooks/UserContext";
 import { classListService } from "../../services/classListService";
 import { coursesService } from "../../services/coursesService";
-import { userService } from "../../services/userService";
 import { formattedDataCourse } from "../../utils/formattedDataCourse";
-import './Calendar.css'; // Tùy chỉnh style để làm nổi bật
+import { useUser } from "../../hooks/UserContext";
+import { userService } from "../../services/userService";
 
 export default function MyProfile() {
   const navigate = useNavigate(); // Khởi tạo navigate
@@ -68,7 +69,8 @@ export default function MyProfile() {
             .map(record => {
               const [year, month, day] = record.attendanceDate.split('T')[0].split('-').map(Number);
               return new Date(year, month - 1, day);
-            })
+            }),
+          link: classItem.linkGoogleMeet
         }));
 
         setClasses(processedData);
@@ -507,6 +509,7 @@ export default function MyProfile() {
                             <p>Ngày bắt đầu: {formatDate(classData.startDate)}</p>
                             <p>Ngày kết thúc: {formatDate(classData.endDate)}</p>
                             <p>Học vào các ngày: {formatScheduledDays(classData.scheduledDays)}</p>
+                            <p>Link: {classData.link}</p>
                             <div className="mx-auto mt-4 w-fit">
                               <Calendar
                                 value={new Date()}

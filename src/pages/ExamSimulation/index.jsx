@@ -79,7 +79,7 @@ export default function DrivingSimulator() {
   }, [currentVideo]);
 
   const handleVideoPause = () => {
-    if (playerRef.current && !processedVideos.includes(currentVideo.questionId)) {
+    if (playerRef.current && !processedVideos.includes(currentVideo.questionId) && !currentVideo.processed) {
       const currentTime = playerRef.current.getCurrentTime(); // Current time in seconds
       const { startTime, endTime } = currentVideo;
 
@@ -100,6 +100,7 @@ export default function DrivingSimulator() {
       }
 
       setProcessedVideos(prev => [...prev, currentVideo.questionId]);
+      currentVideo.processed = true;
     }
   };
 
