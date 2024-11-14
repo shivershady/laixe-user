@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
 import { FaCheckCircle, FaTimes } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+
 import { examService } from '../../services/examService';
+import { useParams } from 'react-router-dom';
 
 export default function DrivingSimulator() {
   const { examId } = useParams();
@@ -12,23 +13,6 @@ export default function DrivingSimulator() {
   const [completedVideos, setCompletedVideos] = useState([]);
   const [failedVideos, setFailedVideos] = useState([]);
   const [processedVideos, setProcessedVideos] = useState([]);
-
-  function getYoutubeEmbedURL(url) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-
-    if (match && match[2].length === 11) {
-      return `https://www.youtube.com/embed/${match[2]}?enablejsapi=1`;
-    } else {
-      const embedMatch = url.match(/^(https?:\/\/)?(www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
-      if (embedMatch) {
-        return url.includes('?') ? `${url}&enablejsapi=1` : `${url}?enablejsapi=1`;
-      } else {
-        return null;
-      }
-    }
-  }
-
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -52,11 +36,11 @@ export default function DrivingSimulator() {
   useEffect(() => {
     let player;
 
-    const onYouTubeIframeAPIReady = () => {
+    const onYouTubeIframeAPIReady = (video) => {
       player = new window.YT.Player('youtube-player', {
         height: '100%', // Change to 100% for full height
         width: '100%',  // Change to 100% for full width
-        videoId: getYoutubeVideoId(currentVideo?.content),
+        videoId: video,
         events: {
           'onReady': onPlayerReady,
           'onStateChange': onPlayerStateChange
@@ -67,6 +51,8 @@ export default function DrivingSimulator() {
 
     const onPlayerReady = (event) => {
       // Player is ready
+      console.log(event);
+
     };
 
     const onPlayerStateChange = (event) => {
@@ -75,8 +61,8 @@ export default function DrivingSimulator() {
       }
     };
 
-    if (window.YT) {
-      onYouTubeIframeAPIReady();
+    if (window.YT && currentVideo?.content) {
+      onYouTubeIframeAPIReady(getYoutubeVideoId(currentVideo.content));
     } else {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
